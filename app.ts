@@ -7,8 +7,9 @@ import path from "path";
 
 import router from "./routes";
 import { connectDB } from "./config/database";
-//import { requestLogger, errorHandler } from "./middlewares";
 import { env } from "./config/env";
+import { authMiddleware } from './middlewares/authMiddleware';
+import { errorHandler } from './middlewares/errorHandlerMiddleware';
 
 const app = express();
 const { PORT, FRONTEND_URL } = env;
@@ -31,11 +32,13 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 
 app.use(helmet());
-//app.use(requestLogger);
+
+//Middlewares
+app.use(authMiddleware);
+app.use(errorHandler);
 
 //Routes
 app.use('/api', router);
-//app.use(errorHandler);
 
 // Start the server
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
