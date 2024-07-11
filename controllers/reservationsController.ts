@@ -8,7 +8,7 @@ import {
   updateReservation,
   deleteReservation,
 } from "../models/reservationsModel";
-//import { reservationSchema } from '../validations/reservations'; // Schema Validation (à dev)
+import { reservationSchema } from '../validations/reservations';
 import mongoose from "mongoose";
 
 export const getAllReservations = async (
@@ -55,7 +55,7 @@ export const getReservationById = async (
 
 export const pushReservation = async (request: Request, response: Response) => {
   try {
-    //reservationSchema.parse(request.body); // Validate reservation data
+    reservationSchema.parse(request.body);
     const newReservation = request.body;
     const createdReservation = await createReservation(newReservation);
     APIResponse(response, createdReservation, "[POST] Créer une réservation");

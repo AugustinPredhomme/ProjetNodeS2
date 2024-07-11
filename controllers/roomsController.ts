@@ -8,7 +8,7 @@ import {
   updateRoom,
   deleteRoom,
 } from "../models/roomsModel";
-//import { roomSchema } from '../validations/rooms'; // Schema Validation (à dev)
+import { roomSchema } from '../validations/rooms';
 import mongoose from "mongoose";
 
 export const getAllRooms = async (request: Request, response: Response) => {
@@ -43,7 +43,7 @@ export const getRoomById = async (request: Request, response: Response) => {
 
 export const pushRoom = async (request: Request, response: Response) => {
   try {
-    //roomSchema.parse(request.body); // Validate room data
+    roomSchema.parse(request.body);
     const newRoom = request.body;
     const createdRoom = await createRoom(newRoom);
     APIResponse(response, createdRoom, "[POST] Créer une chambre");

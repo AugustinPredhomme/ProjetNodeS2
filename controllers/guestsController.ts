@@ -9,7 +9,7 @@ import {
   deleteGuest,
 } from "../models/guestsModel";
 import mongoose from "mongoose";
-//import { guestSchema } from '../validations/guests'; // Schema Validation (à dev)
+import { guestSchema } from '../validations/guests';
 
 export const getAllGuests = async (request: Request, response: Response) => {
   try {
@@ -43,7 +43,7 @@ export const getGuestById = async (request: Request, response: Response) => {
 
 export const pushGuest = async (request: Request, response: Response) => {
   try {
-    //guestSchema.parse(request.body); // Validate guest data
+    guestSchema.parse(request.body);
     const newGuest = request.body;
     const createdGuest = await createGuest(newGuest);
     APIResponse(response, createdGuest, "[POST] Créer un invité");
