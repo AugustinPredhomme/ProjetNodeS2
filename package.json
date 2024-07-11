@@ -10,7 +10,7 @@
     },
     "scripts": {
         "build": "tsc",
-        "start": "node dist/app.ts",
+        "start": "node dist/app.js",
         "dev": "concurrently \tsc --watch\" \"tsnd --respawn app.ts\""
     },
     "keywords": [
