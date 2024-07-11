@@ -37,8 +37,13 @@ app.use(helmet());
 app.use(authMiddleware);
 app.use(errorHandler);
 
+// Routeur par défaut
+app.get("/", (req, res) => {
+    res.send("Bienvenue sur mon API RESTful!");
+});
+
 //Routes
-app.use('/api', router);
+app.use('/', router);
 
 // Start the server
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
