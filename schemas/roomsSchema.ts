@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IRoom extends Document {
   id: Types.ObjectId;
-  roomType: string;
+  roomType: "Double"|"Simple";
   capacity: number;
   amenities: string[];
 }
