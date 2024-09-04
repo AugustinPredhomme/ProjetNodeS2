@@ -1,7 +1,7 @@
 import { EnvConfig } from "../types/env";
 import dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config({ path: process.env.NODE_ENV === 'test' ? '.env.test': '.env' });
 
 type NODE_ENV = 'production' | 'development' | 'test';
 
