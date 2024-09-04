@@ -1,4 +1,4 @@
-import { verifyPassword, hashPassword } from '../utils';
+import { verifyPassword, hashPassword } from '../../utils';
 
 describe('password check', () => {
     const inputPassword = "mdpTest";
