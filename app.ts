@@ -10,6 +10,7 @@ import { connectDB } from "./config/database";
 import { env } from "./config/env";
 import { authMiddleware } from './middlewares/authMiddleware';
 import { errorHandler } from './middlewares/errorHandlerMiddleware';
+import { refreshTokenMiddleware } from './middlewares/refreshTokenMiddleware';
 
 const app = express();
 const { PORT, FRONTEND_URL } = env;
@@ -35,6 +36,7 @@ app.use(helmet());
 
 //Middlewares
 app.use(authMiddleware);
+app.use(refreshTokenMiddleware);
 app.use(errorHandler);
 
 // Routeur par défaut

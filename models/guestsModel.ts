@@ -5,17 +5,20 @@ import logger from '../utils/logger';
 export const findAllGuests = async (): Promise<IGuest[]> => {
   try {
     logger.info(`[GUEST] Récupération réalisée avec succès`);
-    return Guest.find().exec();
+    return Guest.find().select('name email').exec();
   } catch (err: any) {
     logger.error(`[GUEST] Echec lors de la récupération: ${err.message}`);
     return [];
   }
 };
 
-export const findGuestById = async (guestId: Types.ObjectId): Promise<IGuest | null> => {
+export const findGuestById = async (guestId: Types.ObjectId): Promise<{guest : IGuest} | null> => {
   try {
     logger.info(`[GUEST] Récupération par ID réalisée avec succès`);
-    return Guest.findById(guestId).exec();
+    const guest = await Guest.findById(guestId).select('name email').exec();
+    if (!guest)
+      return null;
+    return { guest: guest.toObject() }
   } catch (err: any) {
     logger.error(`[GUEST] Echec lors de la récupération par ID: ${err.message}`);
     return null;
@@ -52,3 +55,12 @@ export const deleteGuest = async (guestId: Types.ObjectId): Promise<boolean> => 
     return false;
   }
 };
+
+export const findByCredentials = async (email: string): Promise<any> => {
+  try {
+      return Guest.findOne({ email }).select('password').exec();
+  } catch (err) {
+      console.error(err);
+      return null
+  } 
+}
