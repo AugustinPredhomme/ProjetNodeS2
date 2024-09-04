@@ -10,28 +10,31 @@ import {
 } from "../models/guestsModel";
 import mongoose from "mongoose";
 import { guestSchema } from '../validations/guests';
+import logger from '../utils/logger';
 
 export const getAllGuests = async (request: Request, response: Response) => {
   try {
+    logger.info("[GET] Récupérer tout les invités");
     const guests = await findAllGuests();
-    APIResponse(response, guests, "[GET] Récupérer tout les invités");
-  } catch (err) {
-    console.error(err);
-    APIResponse(response, [], "Une erreur interne est survenue", 500);
+    APIResponse(response, guests, "Invités récupérés avec succès");
+  } catch (err: any) {
+    logger.error(`Erreur lors de la récupération des invités: ${err.message}`);
+    APIResponse(response, null, "Erreur lors de la récupération des invités", 500);
   }
 };
 
 export const getGuestById = async (request: Request, response: Response) => {
   const { guestId } = request.params;
   try {
+    logger.info(`[GET] Récupérer l'invité avec l'id ${guestId}`);
     const guest = await findGuestById(new mongoose.Types.ObjectId(guestId));
     APIResponse(
       response,
       guest,
-      `[GET] Récupérer l'invité avec l'id ${guestId}`
+      `Invité ${guestId} récupéré avec succès`
     );
-  } catch (err) {
-    console.error(err);
+  } catch (err: any) {
+    logger.error(`Erreur lors de la récupération de l'invité ${guestId}: ${err.message}`);
     APIResponse(
       response,
       null,
@@ -43,12 +46,13 @@ export const getGuestById = async (request: Request, response: Response) => {
 
 export const pushGuest = async (request: Request, response: Response) => {
   try {
+    logger.info(`[POST] Créer un invité`);
     guestSchema.parse(request.body);
     const newGuest = request.body;
     const createdGuest = await createGuest(newGuest);
-    APIResponse(response, createdGuest, "[POST] Créer un invité");
-  } catch (err) {
-    console.error(err);
+    APIResponse(response, createdGuest, "Invité créé avec succès");
+  } catch (err: any) {
+    logger.error(`Erreur lors de la création de l'invité: ${err.message}`);
     if (err instanceof z.ZodError) {
       APIResponse(
         response,
@@ -65,6 +69,7 @@ export const pushGuest = async (request: Request, response: Response) => {
 export const upGuest = async (request: Request, response: Response) => {
   const { guestId } = request.params;
   try {
+    logger.info(`[PUT] Mettre à jour l'invité avec l'id ${guestId}`);
     const updateData = request.body;
     const updatedGuest = await updateGuest(
       new mongoose.Types.ObjectId(guestId),
@@ -73,10 +78,10 @@ export const upGuest = async (request: Request, response: Response) => {
     APIResponse(
       response,
       updatedGuest,
-      `[PUT] Mettre à jour l'invité avec l'id ${guestId}`
+      `Invité ${guestId} mis à jour avec succès`
     );
-  } catch (err) {
-    console.error(err);
+  } catch (err: any) {
+    logger.error(`Erreur lors de la mise à jour de l'invité ${guestId}: ${err.message}`);
     APIResponse(
       response,
       null,
@@ -89,14 +94,15 @@ export const upGuest = async (request: Request, response: Response) => {
 export const delGuest = async (request: Request, response: Response) => {
   const { guestId } = request.params;
   try {
+    logger.info(`[DELETE] Supprimer l'invité avec l'id ${guestId}`);
     const deleted = await deleteGuest(new mongoose.Types.ObjectId(guestId));
     APIResponse(
       response,
       deleted,
-      `[DELETE] Supprimer l'invité avec l'id ${guestId}`
+      `Invité ${guestId} supprimé avec succès`
     );
-  } catch (err) {
-    console.error(err);
+  } catch (err: any) {
+    logger.error(`Erreur lors de la suppression de l'invité ${guestId}: ${err.message}`);
     APIResponse(
       response,
       null,
