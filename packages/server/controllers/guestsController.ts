@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { z } from 'zod';
-import { APIResponse } from "../utils";
+import { APIResponse, dynamicImport } from "../utils";
 import {
   findAllGuests,
   findGuestById,
@@ -8,9 +8,9 @@ import {
   updateGuest,
   deleteGuest,
 } from "../models/guestsModel";
-import mongoose from "mongoose";
 import { guestSchema } from '../validations/guests';
 import logger from '../utils/logger';
+import { parseID } from "../utils/parse";
 
 export const getAllGuests = async (request: Request, response: Response) => {
   try {
@@ -25,14 +25,16 @@ export const getAllGuests = async (request: Request, response: Response) => {
 
 export const getGuestById = async (request: Request, response: Response) => {
   const { guestId } = request.params;
+  const { findGuestById } = await dynamicImport("guest");
+  const objectId = parseID(guestId);
   try {
     logger.info(`[GET] Récupérer l'invité avec l'id ${guestId}`);
-    const guest = await findGuestById(new mongoose.Types.ObjectId(guestId));
-    APIResponse(
-      response,
-      guest,
-      `Invité ${guestId} récupéré avec succès`
-    );
+    const guest = await findGuestById(objectId);
+    if (!guest) {
+      APIResponse(response, null, `L'invité avec l'id ${guestId} n'existe pas`);
+    } else {
+      APIResponse(response, guest, `Invité ${guestId} récupéré avec succès`);
+    }
   } catch (err: any) {
     logger.error(`Erreur lors de la récupération de l'invité ${guestId}: ${err.message}`);
     APIResponse(
@@ -68,18 +70,13 @@ export const pushGuest = async (request: Request, response: Response) => {
 
 export const upGuest = async (request: Request, response: Response) => {
   const { guestId } = request.params;
+  const { updateGuest } = await dynamicImport("guest");
+  const objectId = parseID(guestId);
+  const updateData = request.body;
   try {
     logger.info(`[PUT] Mettre à jour l'invité avec l'id ${guestId}`);
-    const updateData = request.body;
-    const updatedGuest = await updateGuest(
-      new mongoose.Types.ObjectId(guestId),
-      updateData
-    );
-    APIResponse(
-      response,
-      updatedGuest,
-      `Invité ${guestId} mis à jour avec succès`
-    );
+    await updateGuest(objectId, updateData);
+    APIResponse(response, null,`Invité ${guestId} mis à jour avec succès`);
   } catch (err: any) {
     logger.error(`Erreur lors de la mise à jour de l'invité ${guestId}: ${err.message}`);
     APIResponse(
@@ -93,12 +90,14 @@ export const upGuest = async (request: Request, response: Response) => {
 
 export const delGuest = async (request: Request, response: Response) => {
   const { guestId } = request.params;
+  const { deleteGuest } = await dynamicImport("guest");
+  const objectId = parseID(guestId);
   try {
     logger.info(`[DELETE] Supprimer l'invité avec l'id ${guestId}`);
-    const deleted = await deleteGuest(new mongoose.Types.ObjectId(guestId));
+    await deleteGuest(objectId, guestId);
     APIResponse(
       response,
-      deleted,
+      null,
       `Invité ${guestId} supprimé avec succès`
     );
   } catch (err: any) {

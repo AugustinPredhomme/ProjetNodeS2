@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { z } from "zod";
-import { APIResponse } from "../utils";
+import { APIResponse, dynamicImport } from "../utils";
 import {
   findAllRooms,
   findRoomById,
@@ -9,8 +9,8 @@ import {
   deleteRoom,
 } from "../models/roomsModel";
 import { roomSchema } from '../validations/rooms';
-import mongoose from "mongoose";
 import logger from '../utils/logger';
+import { parseID } from "../utils/parse";
 
 export const getAllRooms = async (request: Request, response: Response) => {
   try {
@@ -25,14 +25,16 @@ export const getAllRooms = async (request: Request, response: Response) => {
 
 export const getRoomById = async (request: Request, response: Response) => {
   const { roomId } = request.params;
+  const { findRoomById } = await dynamicImport("room");
+  const objectId = parseID(roomId);
   try {
     logger.info(`[GET] Récupérer la chambre avec l'id ${roomId}`);
-    const room = await findRoomById(new mongoose.Types.ObjectId(roomId));
-    APIResponse(
-      response,
-      room,
-      `Chambre ${roomId} récupérée avec succès`
-    );
+    const room = await findRoomById(objectId);
+    if (!room) {
+      APIResponse(response, null, `La chambre avec l'id ${roomId} n'existe pas`);
+    } else {
+      APIResponse(response, room, `Chambre ${roomId} récupérée avec succès`);
+    }
   } catch (err: any) {
     logger.error(`Erreur lors de la récupération de la chambre ${roomId}: ${err.message}`);
     APIResponse(
@@ -68,18 +70,13 @@ export const pushRoom = async (request: Request, response: Response) => {
 
 export const upRoom = async (request: Request, response: Response) => {
   const { roomId } = request.params;
+  const { updateRoom } = await dynamicImport("room");
+  const objectId = parseID(roomId);
+  const updateData = request.body;
   try {
     logger.info(`[PUT] Mettre à jour la chambre avec l'id ${roomId}`);
-    const updateData = request.body;
-    const updatedRoom = await updateRoom(
-      new mongoose.Types.ObjectId(roomId),
-      updateData
-    );
-    APIResponse(
-      response,
-      updatedRoom,
-      `[PUT] Mettre à jour la chambre avec l'id ${roomId}`
-    );
+    await updateRoom(objectId, updateData);
+    APIResponse(response, null,`Chambre ${roomId} mise à jour avec succès`);
   } catch (err: any) {
     logger.error(`Erreur lors de la mise à jour de la chambre ${roomId}: ${err.message}`);
     APIResponse(
@@ -93,12 +90,14 @@ export const upRoom = async (request: Request, response: Response) => {
 
 export const delRoom = async (request: Request, response: Response) => {
   const { roomId } = request.params;
+  const { deleteGuest } = await dynamicImport("room");
+  const objectId = parseID(roomId);
   try {
     logger.info(`[DELETE] Supprimer la chambre avec l'id ${roomId}`);
-    const deleted = await deleteRoom(new mongoose.Types.ObjectId(roomId));
+    await deleteGuest(objectId, roomId);
     APIResponse(
       response,
-      deleted,
+      null,
       `Chambre ${roomId} supprimée avec succès`
     );
   } catch (err: any) {

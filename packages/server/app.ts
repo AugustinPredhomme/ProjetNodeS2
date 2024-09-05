@@ -6,7 +6,6 @@ import path from "path";
 
 
 import router from "./routes";
-import { connectDB } from "./config/database";
 import { env } from "./config/env";
 import { authMiddleware } from './middlewares/authMiddleware';
 import { errorHandler } from './middlewares/errorHandlerMiddleware';
@@ -14,8 +13,6 @@ import { refreshTokenMiddleware } from './middlewares/refreshTokenMiddleware';
 
 const app = express();
 const { PORT, FRONTEND_URL } = env;
-
-connectDB();
 
 // Middleware
 app.use(cors());

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { z } from "zod";
-import { APIResponse } from "../utils";
+import { APIResponse, dynamicImport } from "../utils";
 import {
   findAllReservations,
   findReservationById,
@@ -11,6 +11,7 @@ import {
 import { reservationSchema } from '../validations/reservations';
 import mongoose from "mongoose";
 import logger from '../utils/logger';
+import { parseID } from "../utils/parse";
 
 export const getAllReservations = async (
   request: Request,
@@ -30,21 +31,18 @@ export const getAllReservations = async (
   }
 };
 
-export const getReservationById = async (
-  request: Request,
-  response: Response
-) => {
+export const getReservationById = async (request: Request, response: Response) => {
   const { reservationId } = request.params;
+  const { findRoomById } = await dynamicImport("reservation");
+  const objectId = parseID(reservationId);
   try {
     logger.info(`[GET] Récupérer la réservation avec l'id ${reservationId}`);
-    const reservation = await findReservationById(
-      new mongoose.Types.ObjectId(reservationId)
-    );
-    APIResponse(
-      response,
-      reservation,
-      `Réservation ${reservationId} récupérée avec succès`
-    );
+    const reservation = await findRoomById(objectId);
+    if (!reservation) {
+      APIResponse(response, null, `La réservation avec l'id ${reservationId} n'existe pas`);
+    } else {
+      APIResponse(response, reservation, `Réservation ${reservationId} récupérée avec succès`);
+    }
   } catch (err: any) {
     logger.error(`Erreur lors de la récupération de la réservation ${reservationId}: ${err.message}`);
     APIResponse(
@@ -80,18 +78,13 @@ export const pushReservation = async (request: Request, response: Response) => {
 
 export const upReservation = async (request: Request, response: Response) => {
   const { reservationId } = request.params;
+  const { updateRoom } = await dynamicImport("reservation");
+  const objectId = parseID(reservationId);
+  const updateData = request.body;
   try {
     logger.info(`[PUT] Mettre à jour la réservation avec l'id ${reservationId}`);
-    const updateData = request.body;
-    const updatedReservation = await updateReservation(
-      new mongoose.Types.ObjectId(reservationId),
-      updateData
-    );
-    APIResponse(
-      response,
-      updatedReservation,
-      `Réservation ${reservationId} mise à jour avec succès`
-    );
+    await updateRoom(objectId, updateData);
+    APIResponse(response, null,`Réservation ${reservationId} mise à jour avec succès`);
   } catch (err: any) {
     logger.error(`Erreur lors de la mise à jour de la réservation ${reservationId}: ${err.message}`);
     APIResponse(
@@ -105,14 +98,14 @@ export const upReservation = async (request: Request, response: Response) => {
 
 export const delReservation = async (request: Request, response: Response) => {
   const { reservationId } = request.params;
+  const { deleteGuest } = await dynamicImport("reservation");
+  const objectId = parseID(reservationId);
   try {
     logger.info(`[DELETE] Supprimer la réservation avec l'id ${reservationId}`);
-    const deleted = await deleteReservation(
-      new mongoose.Types.ObjectId(reservationId)
-    );
+    await deleteGuest(objectId, reservationId);
     APIResponse(
       response,
-      deleted,
+      null,
       `Réservation ${reservationId} supprimée avec succès`
     );
   } catch (err: any) {
