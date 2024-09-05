@@ -1,3 +1,4 @@
+/*
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IDebug extends Document {
@@ -12,3 +13,12 @@ const debugSchema: Schema = new Schema({
 });
 
 export default mongoose.model<IDebug>('Debug', debugSchema);
+*/
+
+import { pgTable, uuid, timestamp, text } from "drizzle-orm/pg-core";
+
+export const debugs = pgTable('debug', {
+    id: uuid('id').defaultRandom().primaryKey(),
+    timestamp: timestamp('timestamp').notNull(),
+    message: text('message').notNull(),
+});
