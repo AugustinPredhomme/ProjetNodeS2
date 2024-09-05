@@ -12,7 +12,10 @@
         "build": "tsc",
         "start": "node dist/app.js",
         "dev": "concurrently \"tsc --watch\" \"tsnd --respawn app.ts\"",
-        "test": "npx jest"
+        "test": "npx jest",
+        "generate": "drizzle-kit generate --config=config/drizzle.ts",
+        "migrate": "tsx -r dotenv/config config/migrate.ts",
+        "studio": "drizzle-kit studio --config=config/drizzle.ts"
     },
     "keywords": [
         "projet",
@@ -27,18 +30,21 @@
     },
     "license": "ISC",
     "dependencies": {
-        "ProjetNodeS3-server": "file:",
         "argon2": "^0.40.3",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
         "dotenv": "^16.4.5",
+        "drizzle-orm": "^0.33.0",
         "ejs": "^3.1.10",
         "express": "^4.19.2",
         "helmet": "^7.1.0",
         "jsonwebtoken": "^9.0.2",
         "mongoose": "^8.5.0",
         "multer": "1.4.5-lts.1",
+        "pg": "^8.12.0",
+        "postgres": "^3.4.4",
         "projetnodes2": "file:",
+        "ProjetNodeS3-server": "file:",
         "winston": "^3.14.2",
         "zod": "^3.23.8"
     },
@@ -51,13 +57,16 @@
         "@types/mongoose": "^5.11.97",
         "@types/multer": "^1.4.12",
         "@types/node": "^20.14.10",
+        "@types/pg": "^8.11.8",
         "@types/supertest": "^6.0.2",
         "concurrently": "^8.2.2",
+        "drizzle-kit": "^0.24.2",
         "jest": "^29.7.0",
         "nodemon": "^3.1.4",
         "supertest": "^7.0.0",
         "ts-jest": "^29.2.5",
         "ts-node": "^10.9.2",
+        "tsx": "^4.19.0",
         "typescript": "^5.5.3"
     }
 }

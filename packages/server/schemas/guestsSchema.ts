@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
+/*import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IGuest extends Document {
   id: Types.ObjectId;
@@ -16,3 +16,14 @@ const guestSchema: Schema = new Schema({
 });
 
 export default mongoose.model<IGuest>('Guest', guestSchema);
+*/
+
+import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
+
+export const guests = pgTable('guests', {
+    id: uuid('id').defaultRandom().primaryKey(),
+    name: varchar('name', { length: 255 }).notNull(),
+    email: varchar('email', { length: 255 }).notNull().unique(),
+    password: varchar('password', { length: 255 }).notNull(),
+    refreshToken: varchar('refresh_token', { length: 255 })
+});
