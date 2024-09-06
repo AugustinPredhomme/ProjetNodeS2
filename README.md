@@ -15,11 +15,7 @@ L'application est réalisée avec différents outils/frameworks, voici les princ
 
 - Installer les dépendances :
 
-    `pnpm install argon2 cookie cookie-parser cors dotenv drizzle-orm ejs express helmet jsonwebtoken multer pg postgres socket.io Winston zod`
-
-- Si vous souhaitez contribuer à ce projet, il faudra aussi installer :
-
-    `pnpm install --save-dev drizzle-kit @types/pg @types/cookie @types/cookie-parser @types/cors @types/express @types/jest @types/jsonwebtoken @types/multer @types/node @types/pg @types/supertest concurrently jest nodemon supertest ts-jest ts-node typescript tsx`
+    `pnpm install`
 
 - Pour démarrer l'application, exécuter :
 

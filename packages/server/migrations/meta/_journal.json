@@ -8,6 +8,20 @@
       "when": 1725536167538,
       "tag": "0000_rainy_namor",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1725615293951,
+      "tag": "0001_glorious_slyde",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1725615448646,
+      "tag": "0002_stale_talkback",
+      "breakpoints": true
     }
   ]
 }

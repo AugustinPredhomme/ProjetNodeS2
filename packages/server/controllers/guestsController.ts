@@ -25,11 +25,9 @@ export const getAllGuests = async (request: Request, response: Response) => {
 
 export const getGuestById = async (request: Request, response: Response) => {
   const { guestId } = request.params;
-  const { findGuestById } = await dynamicImport("guest");
-  const objectId = parseID(guestId);
   try {
     logger.info(`[GET] Récupérer l'invité avec l'id ${guestId}`);
-    const guest = await findGuestById(objectId);
+    const guest = await findGuestById(guestId);
     if (!guest) {
       APIResponse(response, null, `L'invité avec l'id ${guestId} n'existe pas`);
     } else {
