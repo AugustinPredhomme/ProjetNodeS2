@@ -3,6 +3,7 @@ import { rooms } from "./roomsSchema";
 import { reservations } from "./reservationsSchema";
 import { debugs } from "./debugSchema";
 import { guestsRelations, reservationsRelations } from "./relations";
+import { messages } from "./messagesSchema";
 
 export {
     guests,
@@ -10,5 +11,6 @@ export {
     reservations,
     debugs,
     guestsRelations,
-    reservationsRelations
+    reservationsRelations,
+    messages
 }
